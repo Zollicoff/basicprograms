@@ -1,0 +1,1 @@
+g++ -Wall StoreItem.cpp main.cpp

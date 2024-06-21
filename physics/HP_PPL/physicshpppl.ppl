@@ -1,0 +1,73 @@
+// HP PPL Program for Physics Problem Solving
+
+// Constants Function
+EXPORT Constants()
+BEGIN
+    RETURN {8.99E9, 8.85E-12, 3.14159, 4 * 3.14159 * 1E-7}; // k, epsilon0, pi, mu0
+END;
+
+// Numeric Input Function
+EXPORT GetNumericInput(prompt)
+BEGIN
+    LOCAL result;
+    INPUT({result}, prompt, "Enter Value");
+    RETURN EXPR(result);
+END;
+
+// Electric Fields and Forces Function
+EXPORT ElectricFieldsAndForces()
+BEGIN
+    LOCAL q, r, q1, q2, E, F;
+    q := GetNumericInput("Charge q (C):");
+    r := GetNumericInput("Distance r (m):");
+    q1 := GetNumericInput("Charge q1 (C):");
+    q2 := GetNumericInput("Charge q2 (C):");
+    E := Constants()(1) * q / r^2;
+    F := Constants()(1) * q1 * q2 / r^2;
+    PRINT("E field: " + E + " N/C, Force: " + F + " N");
+END;
+
+// Gauss's Law Function
+EXPORT GaussLaw()
+BEGIN
+    LOCAL q, A, E;
+    q := GetNumericInput("Total charge q (C):");
+    A := GetNumericInput("Area A (m²):");
+    E := q / (Constants()(2) * A);
+    PRINT("E field: " + E + " N/C");
+END;
+
+// Electric Potential and Energy Function
+EXPORT ElectricPotentialAndEnergy()
+BEGIN
+    LOCAL q, r, q1, q2, V, U;
+    q := GetNumericInput("Charge q (C):");
+    r := GetNumericInput("Distance r (m):");
+    q1 := GetNumericInput("Charge q1 (C):");
+    q2 := GetNumericInput("Charge q2 (C):");
+    V := Constants()(1) * q / r;
+    U := Constants()(1) * q1 * q2 / r;
+    PRINT("Potential: " + V + " V, Energy: " + U + " J");
+END;
+
+// Main Program Function
+EXPORT MainProgram()
+BEGIN
+    LOCAL choice;
+    CHOOSE(choice, "Select Problem Type", "Electric Fields and Forces", "Gauss's Law", "Electric Potential and Energy");
+    IF choice == 1 THEN
+        ElectricFieldsAndForces();
+    END;
+    IF choice == 2 THEN
+        GaussLaw();
+    END;
+    IF choice == 3 THEN
+        ElectricPotentialAndEnergy();
+    END;
+END;
+
+// Help Function
+EXPORT ShowHelp()
+BEGIN
+    MSGBOX("Choose a problem type. Enter necessary parameters when prompted.");
+END;

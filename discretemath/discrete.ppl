@@ -1,0 +1,67 @@
+// Function to convert an integer to a binary string
+EXPORT IntToBinary(integer)
+BEGIN
+  LOCAL binary := "";
+  LOCAL temp;
+  WHILE integer > 0 DO
+    temp := IP(integer / 2);
+    binary := CONCAT(STRING(integer - 2 * temp), binary);
+    integer := temp;
+  END;
+  RETURN binary;
+END;
+
+// Function to convert the fractional part of a decimal to a binary string
+EXPORT FracToBinary(fraction, limit)
+BEGIN
+  LOCAL binary := "";
+  LOCAL count := 0;
+  WHILE fraction != 0 AND count < limit DO
+    fraction := fraction * 2;
+    binary := CONCAT(binary, STRING(IP(fraction)));
+    fraction := FP(fraction);
+    count := count + 1;
+  END;
+  RETURN binary;
+END;
+
+// Main function to convert a decimal number to binary and IEEE 754 format
+EXPORT DecimalToBinaryIEEE(decimal)
+BEGIN
+  LOCAL sign := 0;
+  LOCAL exponentBias := 127;
+  LOCAL integerPart := IP(decimal);
+  LOCAL fractionalPart := FP(decimal);
+  LOCAL binaryIntegerPart := "";
+  LOCAL binaryFractionalPart := "";
+  LOCAL exponent := 0;
+  LOCAL mantissa := "";
+  LOCAL ieee754 := "";
+  LOCAL i := 1;
+
+  IF decimal < 0 THEN
+    sign := 1;
+    decimal := ABS(decimal);
+    integerPart := IP(decimal);
+    fractionalPart := FP(decimal);
+  END;
+
+  binaryIntegerPart := IntToBinary(integerPart);
+  binaryFractionalPart := FracToBinary(fractionalPart, 23);
+
+  IF integerPart == 0 THEN
+    WHILE i <= SIZE(binaryFractionalPart) AND MID(binaryFractionalPart, i, 1) ≠ "1" DO
+      i := i + 1;
+    END;
+    exponent := -1 * (i - 1) + exponentBias;
+    mantissa := MID(binaryFractionalPart, i + 1);
+  ELSE
+    exponent := SIZE(binaryIntegerPart) - 1 + exponentBias;
+    mantissa := MID(binaryIntegerPart, 2) + binaryFractionalPart;
+  END;
+
+  mantissa := LEFT(mantissa, 23);
+  ieee754 := CONCAT(STRING(sign), " ", IntToBinary(exponent), " ", mantissa);
+
+  RETURN ieee754;
+END;
